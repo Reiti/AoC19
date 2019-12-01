@@ -9,4 +9,9 @@ object Util {
       source => source.mkString
     }.get
   }
+
+  def loadDayLines(day: Int): List[String] = loadDay(day).split("\n").toList
+
+  def loadDayInts(day: Int): List[Int] = loadDayLines(day).map(_.toInt)
+
 }

@@ -3,7 +3,7 @@ import util.Util
 object Day1 {
   def main(args: Array[String]): Unit = {
 
-    val masses = Util.loadDay(1).split("\n").map(_.toInt)
+    val masses = Util.loadDayInts(1)
 
     //Part 1
     println(masses.map(fuelCost).sum)
@@ -17,8 +17,10 @@ object Day1 {
 
   def fuelCostReal(mass: Int): Int = {
     if(fuelCost(mass) <= 0) {
-      return 0
+      0
     }
-    fuelCost(mass) + fuelCostReal(fuelCost(mass))
+    else {
+      fuelCost(mass) + fuelCostReal(fuelCost(mass))
+    }
   }
 }
