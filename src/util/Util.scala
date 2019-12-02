@@ -6,7 +6,7 @@ import scala.util.Using
 object Util {
   def loadDay(day: Int): String = {
     Using(Source.fromResource(s"$day.txt")) {
-      source => source.mkString
+      source => source.mkString.strip()
     }.get
   }
 
