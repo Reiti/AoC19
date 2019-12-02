@@ -14,9 +14,9 @@ object Day2 {
     breakable {
       for (noun <- 0 to 99) {
         for (verb <- 0 to 99) {
-          val alteredProgam = program.updated(1, noun).updated(2, verb)
-
-          if (run(alteredProgam) == 19690720) {
+          val alteredProgram = program.updated(1, noun).updated(2, verb)
+          
+          if (run(alteredProgram) == 19690720) {
             println(100 * noun + verb)
             break
           }
