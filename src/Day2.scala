@@ -8,14 +8,17 @@ object Day2 {
 
     //Part 1
     println(run(program.updated(1, 12)))
-    
+
     //Part 2
-    val res = (0 to 99).combinations(2) find {
-      case Seq(noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720
-    }
+    val perms = for {
+      noun <- (0 to 99).view
+      verb <- (0 to 99).view
+    } yield (noun, verb)
+
+    val res = perms find {case (noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720 }
 
     res match {
-      case Some(Seq(noun, verb)) => println(noun * 100 + verb)
+      case Some((noun, verb)) => println(noun * 100 + verb)
       case None => println("no solution found")
     }
   }
