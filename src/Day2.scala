@@ -1,7 +1,6 @@
 import util.Util
 
 import scala.annotation.tailrec
-import scala.util.control.Breaks._
 
 object Day2 {
   def main(args: Array[String]): Unit = {
@@ -9,19 +8,15 @@ object Day2 {
 
     //Part 1
     println(run(program.updated(1, 12)))
-
+    
     //Part 2
-    breakable {
-      for (noun <- 0 to 99) {
-        for (verb <- 0 to 99) {
-          val alteredProgram = program.updated(1, noun).updated(2, verb)
+    val res = (0 to 99).combinations(2) find {
+      case Seq(noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720
+    }
 
-          if (run(alteredProgram) == 19690720) {
-            println(100 * noun + verb)
-            break
-          }
-        }
-      }
+    res match {
+      case Some(Seq(noun, verb)) => println(noun * 100 + verb)
+      case None => println("no solution found")
     }
   }
 
