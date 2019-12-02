@@ -15,7 +15,7 @@ object Day2 {
       for (noun <- 0 to 99) {
         for (verb <- 0 to 99) {
           val alteredProgram = program.updated(1, noun).updated(2, verb)
-          
+
           if (run(alteredProgram) == 19690720) {
             println(100 * noun + verb)
             break
