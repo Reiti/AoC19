@@ -15,7 +15,7 @@ object Day2 {
       verb <- (0 to 99).view
     } yield (noun, verb)
 
-    val res = perms find {case (noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720 }
+    val res = perms find {case (noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720}
 
     res match {
       case Some((noun, verb)) => println(noun * 100 + verb)
