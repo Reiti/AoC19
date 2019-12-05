@@ -12,12 +12,12 @@ class IntcodeVM(program: Array[Int]) {
     operation match {
       case 1 =>
         val res = p1 + p2
-        runH(program.updated(program(opInd + 3), res), opInd + 4, input)
+        runH(program.updated(p3, res), opInd + 4, input)
       case 2 =>
         val res = p1 * p2
-        runH(program.updated(program(opInd + 3), res), opInd + 4, input)
+        runH(program.updated(p3, res), opInd + 4, input)
       case 3 =>
-        runH(program.updated(program(opInd + 1), input.head), opInd + 2, input.tail)
+        runH(program.updated(p1, input.head), opInd + 2, input.tail)
       case 4 =>
         println(p1)
         runH(program, opInd + 2, input)
@@ -61,7 +61,7 @@ class IntcodeVM(program: Array[Int]) {
   private def isOutput(opcode: Int, position: Int): Boolean = {
     opcode match {
       case 1 | 2 | 7 | 8 => position == 3
-      case 3 => position == 2
+      case 3 => position == 1
       case _ => false
     }
   }
