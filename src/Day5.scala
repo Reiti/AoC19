@@ -1,15 +1,15 @@
 import util.Util
-import util.IntcodeProgram
+import util.IntcodeVM
 
 object Day5 {
   def main(args: Array[String]): Unit = {
-    val program = new IntcodeProgram(Util.loadDay(5).split(",") map {_.toInt})
+    val vm = new IntcodeVM(Util.loadDay(5).split(",") map {_.toInt})
 
     //Part 1
-    program.run(List(1))
+    vm.run(List(1))
 
     //Part 2
-    program.run(List(5))
+    vm.run(List(5))
   }
 
 }
