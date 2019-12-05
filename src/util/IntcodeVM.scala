@@ -22,21 +22,15 @@ class IntcodeVM(program: Array[Int]) {
         println(p1)
         runH(program, opInd + 2, input)
       case 5 =>
-        if(p1 != 0) {
-          runH(program, p2, input)
-        } else {
-          runH(program, opInd + 3, input)
-        }
+        val target = if (p1 != 0) p2 else opInd + 3
+        runH(program, target, input)
       case 6 =>
-        if(p1 == 0) {
-          runH(program, p2, input)
-        } else {
-          runH(program, opInd + 3, input)
-        }
+        val target = if (p1 == 0) p2 else opInd + 3
+        runH(program, target, input)
       case 7 =>
-          runH(program.updated(p3, boolToInt(p1 < p2)), opInd + 4, input)
+        runH(program.updated(p3, boolToInt(p1 < p2)), opInd + 4, input)
       case 8 =>
-          runH(program.updated(p3, boolToInt(p1 == p2)), opInd + 4, input)
+        runH(program.updated(p3, boolToInt(p1 == p2)), opInd + 4, input)
       case 99 =>
         program(0)
     }
