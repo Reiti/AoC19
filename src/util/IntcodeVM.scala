@@ -49,14 +49,16 @@ class IntcodeVM(program: Array[Int]) {
     val second = (opcode / 1000) % 10
     val third = (opcode / 10000) % 10
 
-    val p1 = if (first == 1 || isOutput(operation, 1)) get(program, opInd + 1) else get(program, get(program, opInd + 1))
-    val p2 = if (second == 1 || isOutput(operation, 2)) get(program, opInd + 2) else get(program, get(program, opInd + 2))
-    val p3 = if(third == 1 || isOutput(operation, 3)) get(program, opInd +3) else get(program, get(program, opInd + 3))
+    val p1 = if (first == 1 || isOutput(operation, 1)) getI(program, opInd + 1) else getP(program, opInd + 1)
+    val p2 = if (second == 1 || isOutput(operation, 2)) getI(program, opInd + 2) else getP(program, opInd + 2)
+    val p3 = if(third == 1 || isOutput(operation, 3)) getI(program, opInd +3) else getP(program, opInd +3)
 
     (operation, p1, p2, p3)
   }
 
-  private def get(program: Array[Int], pos: Int): Int = program.lift(pos).getOrElse(0)
+  private def getI(program: Array[Int], pos: Int): Int = program.lift(pos).getOrElse(0)
+
+  private def getP(program: Array[Int], pos: Int): Int = getI(program, getI(program, pos))
 
   private def isOutput(opcode: Int, position: Int): Boolean = {
     opcode match {
