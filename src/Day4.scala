@@ -3,10 +3,10 @@ object Day4 {
     val input = (254032 to 789860).map(_.toString)
     val increasing = input.filter(checkIncreasing)
 
-    //Day 1
+    //Part 1
     println(increasing.count(checkDouble))
 
-    //Day 2
+    //Part 2
     println(increasing.count(checkOnlyDouble))
   }
 

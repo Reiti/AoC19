@@ -9,6 +9,7 @@ object Day3 {
 
     val intersections = w1.map(x => (x._1, x._2)).toSet.intersect(w2.map(x => (x._1, x._2)).toSet)
 
+    //Part 1
     println(intersections.map({case (x, y) => Math.abs(x) + Math.abs(y)}).min)
 
     val intersectionsWithSteps = intersections.map({case (x, y) =>
@@ -17,6 +18,7 @@ object Day3 {
       (x, y, one.get._3 + two.get._3)
     })
 
+    //Part 2
     println(intersectionsWithSteps.map(_._3).min)
   }
 
