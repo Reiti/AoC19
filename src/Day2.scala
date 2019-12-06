@@ -9,7 +9,6 @@ object Day2 {
     //Part 1
     println(run(program.updated(1, 12)))
 
-    //Part 2
     val perms = for {
       noun <- (0 to 99).view
       verb <- (0 to 99).view
@@ -17,6 +16,7 @@ object Day2 {
 
     val res = perms find {case (noun, verb) => run(program.updated(1, noun).updated(2, verb)) == 19690720}
 
+    //Part 2
     res match {
       case Some((noun, verb)) => println(noun * 100 + verb)
       case None => println("no solution found")
