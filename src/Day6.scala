@@ -4,9 +4,9 @@ import scala.annotation.tailrec
 
 object Day6 {
   def main(args: Array[String]): Unit = {
-    val inputs = Util.loadDayLines(6).map(x => (x.split("[)]")(0), x.split("[)]")(1)))
-    val parents = inputs.map(x => (x._2, x._1)).toMap
-    val objects = inputs.map(_._2).distinct
+    val inputs = Util.loadDayLines(6).map(x => x.split("\\)"))
+    val parents = inputs.map(x => (x(1), x(0))).toMap
+    val objects = inputs.map(x => x(1))
 
     //Part 1
     println(objects.map(x => orbits(parents, x).size).sum)
