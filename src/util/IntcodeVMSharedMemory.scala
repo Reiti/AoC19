@@ -17,9 +17,7 @@ class IntcodeVMSharedMemory(program: Array[Int]) {
         val res = p1 * p2
         runH(program.updated(p3, res), opInd + 4, input, output)
       case 3 =>
-        while(input.empty()) {Thread.sleep(1)}
-        val x = input.read().get
-        runH(program.updated(p1, x), opInd + 2, input, output)
+        runH(program.updated(p1, input.read()), opInd + 2, input, output)
       case 4 =>
         output.write(p1)
         runH(program, opInd + 2, input, output)

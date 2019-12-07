@@ -1,6 +1,6 @@
 import util.{IntcodeVM, IntcodeVMSharedMemory, SharedMem, Util}
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutorService, Future}
 import java.util.concurrent.Executors
 
 import scala.concurrent.duration.Duration
@@ -19,19 +19,19 @@ object Day7 {
     println(((0 to 4).permutations map {conf =>
       ve.run(
         List(conf(4)) ++
-          vd.run(
-            List(conf(3)) ++
-              vc.run(
-                List(conf(2)) ++
-                  vb.run(
-                    List(conf(1)) ++
-                      va.run(
-                        List(conf(0)) ++
-                          List(0)
-                      )
-                  )
+        vd.run(
+          List(conf(3)) ++
+          vc.run(
+            List(conf(2)) ++
+            vb.run(
+              List(conf(1)) ++
+              va.run(
+                List(conf(0)) ++
+                List(0)
               )
+            )
           )
+        )
       ).head
     }).max)
 
@@ -46,7 +46,7 @@ object Day7 {
     val c_s = new IntcodeVMSharedMemory(program)
     val d_s = new IntcodeVMSharedMemory(program)
     val e_s = new IntcodeVMSharedMemory(program)
-    implicit val ec = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
+    implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
 
     val res = ((5 to 9).permutations map {conf =>
       mem_e.write(conf(0))
@@ -64,7 +64,7 @@ object Day7 {
 
       val out = Await.result(e_r, Duration.Inf)
       out.read()
-    }).max.get
+    }).max
 
 
     //Part 2
