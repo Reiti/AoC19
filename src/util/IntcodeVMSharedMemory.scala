@@ -4,10 +4,10 @@ import scala.annotation.tailrec
 
 class IntcodeVMSharedMemory(program: Array[Int]) {
 
-  def run(input: SharedMem, output: SharedMem): SharedMem = runH(program, 0, input, output)
+  def run(input: Pipe, output: Pipe): Pipe = runH(program, 0, input, output)
 
   @tailrec
-  private def runH(program: Array[Int], opInd: Int, input: SharedMem, output: SharedMem): SharedMem = {
+  private def runH(program: Array[Int], opInd: Int, input: Pipe, output: Pipe): Pipe = {
     val (operation, p1, p2, p3) = load(program, opInd)
     operation match {
       case 1 =>

@@ -1,4 +1,4 @@
-import util.{IntcodeVM, IntcodeVMSharedMemory, SharedMem, Util}
+import util.{IntcodeVM, IntcodeVMSharedMemory, Pipe, Util}
 
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutorService, Future}
 import java.util.concurrent.Executors
@@ -35,11 +35,11 @@ object Day7 {
       ).head
     }).max)
 
-    val mem_a = new SharedMem
-    val mem_b = new SharedMem
-    val mem_c = new SharedMem
-    val mem_d = new SharedMem
-    val mem_e = new SharedMem
+    val mem_a = new Pipe
+    val mem_b = new Pipe
+    val mem_c = new Pipe
+    val mem_d = new Pipe
+    val mem_e = new Pipe
 
     val a_s = new IntcodeVMSharedMemory(program)
     val b_s = new IntcodeVMSharedMemory(program)
