@@ -2,7 +2,7 @@ package util
 
 import scala.annotation.tailrec
 
-class IntcodeVMSharedMemory(program: Array[Int]) {
+class IntcodeVMPipes(program: Array[Int]) {
 
   def run(input: Pipe, output: Pipe): Pipe = runH(program, 0, input, output)
 

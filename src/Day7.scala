@@ -1,4 +1,4 @@
-import util.{IntcodeVM, IntcodeVMSharedMemory, Pipe, Util}
+import util.{IntcodeVM, IntcodeVMPipes, Pipe, Util}
 
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutorService, Future}
 import java.util.concurrent.Executors
@@ -41,11 +41,11 @@ object Day7 {
     val mem_d = new Pipe
     val mem_e = new Pipe
 
-    val a_s = new IntcodeVMSharedMemory(program)
-    val b_s = new IntcodeVMSharedMemory(program)
-    val c_s = new IntcodeVMSharedMemory(program)
-    val d_s = new IntcodeVMSharedMemory(program)
-    val e_s = new IntcodeVMSharedMemory(program)
+    val a_s = new IntcodeVMPipes(program)
+    val b_s = new IntcodeVMPipes(program)
+    val c_s = new IntcodeVMPipes(program)
+    val d_s = new IntcodeVMPipes(program)
+    val e_s = new IntcodeVMPipes(program)
 
     implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
 
