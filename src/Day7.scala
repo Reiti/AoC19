@@ -49,7 +49,8 @@ object Day7 {
 
     implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
 
-    val res = ((5 to 9).permutations map {conf =>
+    //Part 2
+    println(((5 to 9).permutations map {conf =>
       mem_e.write(conf(0))
       mem_e.write(0)
       mem_a.write(conf(1))
@@ -57,18 +58,12 @@ object Day7 {
       mem_c.write(conf(3))
       mem_d.write(conf(4))
 
-      val a_r = Future {a_s.run(mem_e, mem_a)}
-      val b_r = Future {b_s.run(mem_a, mem_b)}
-      val c_r = Future {c_s.run(mem_b, mem_c)}
-      val d_r = Future {d_s.run(mem_c, mem_d)}
-      val e_r = Future {e_s.run(mem_d, mem_e)}
-
-      val out = Await.result(e_r, Duration.Inf)
-      out.read()
-    }).max
-
-    //Part 2
-    println(res)
+      Future {a_s.run(mem_e, mem_a)}
+      Future {b_s.run(mem_a, mem_b)}
+      Future {c_s.run(mem_b, mem_c)}
+      Future {d_s.run(mem_c, mem_d)}
+      Await.result(Future {e_s.run(mem_d, mem_e)}, Duration.Inf).read()
+    }).max)
   }
 }
 
