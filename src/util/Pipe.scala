@@ -2,7 +2,7 @@ package util
 
 import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
-class SharedMem {
+class Pipe {
   val data: BlockingQueue[Int] = new LinkedBlockingQueue[Int]()
 
   def empty(): Boolean = data.isEmpty
