@@ -62,7 +62,7 @@ object Day7 {
       Future {b_s.run(mem_a, mem_b)}
       Future {c_s.run(mem_b, mem_c)}
       Future {d_s.run(mem_c, mem_d)}
-      Await.result(Future {e_s.run(mem_d, mem_e)}, Duration.Inf).read()
+      Await.result(Future {e_s.run(mem_d, mem_e)}, Duration.Inf).readLast()
     }).max)
   }
 }
