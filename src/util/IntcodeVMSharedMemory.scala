@@ -2,12 +2,12 @@ package util
 
 import scala.annotation.tailrec
 
-class IntcodeVM(program: Array[Int]) {
+class IntcodeVMSharedMemory(program: Array[Int]) {
 
-  def run(input: List[Int]): List[Int] = runH(program, 0, input, List())
+  def run(input: SharedMem, output: SharedMem): SharedMem = runH(program, 0, input, output)
 
   @tailrec
-  private def runH(program: Array[Int], opInd: Int, input: List[Int], output: List[Int]): List[Int] = {
+  private def runH(program: Array[Int], opInd: Int, input: SharedMem, output: SharedMem): SharedMem = {
     val (operation, p1, p2, p3) = load(program, opInd)
     operation match {
       case 1 =>
@@ -17,9 +17,12 @@ class IntcodeVM(program: Array[Int]) {
         val res = p1 * p2
         runH(program.updated(p3, res), opInd + 4, input, output)
       case 3 =>
-        runH(program.updated(p1, input.head), opInd + 2, input.tail, output)
+        while(input.empty()) {Thread.sleep(1)}
+        val x = input.read().get
+        runH(program.updated(p1, x), opInd + 2, input, output)
       case 4 =>
-        runH(program, opInd + 2, input, List(p1) ++ output)
+        output.write(p1)
+        runH(program, opInd + 2, input, output)
       case 5 =>
         val target = if (p1 != 0) p2 else opInd + 3
         runH(program, target, input, output)

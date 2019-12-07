@@ -6,10 +6,10 @@ object Day5 {
     val vm = new IntcodeVM(Util.loadDay(5).split(",") map {_.toInt})
 
     //Part 1
-    vm.run(List(1))
+    vm.run(List(1)).foreach(println)
 
     //Part 2
-    vm.run(List(5))
+    vm.run(List(5)).foreach(println)
   }
 
 }
