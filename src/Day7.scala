@@ -46,6 +46,7 @@ object Day7 {
     val c_s = new IntcodeVMSharedMemory(program)
     val d_s = new IntcodeVMSharedMemory(program)
     val e_s = new IntcodeVMSharedMemory(program)
+
     implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
 
     val res = ((5 to 9).permutations map {conf =>
@@ -66,11 +67,8 @@ object Day7 {
       out.read()
     }).max
 
-
     //Part 2
     println(res)
-
-
   }
 }
 
