@@ -6,11 +6,19 @@ object Day8 {
     val h = 6
     val layers = Util.loadDay(8).strip().grouped(w*h).toList
 
-    val min = layers.map(x => x.count(_ == '0')).min
-    val minLayer = layers.find(x => x.count(_ == '0') == min).get
-
     //Part 1
-    println(minLayer.count(_ == '1') * minLayer.count(_ == '2'))
+    println(layers.foldLeft((w*h, 0))({
+      case ((zeroes, product), curr) =>
+        val nZeroes = curr.count(_ == '0')
+        val nProduct = curr.count(_ == '1') * curr.count(_ == '2')
+
+        if(nZeroes < zeroes) {
+          (nZeroes, nProduct)
+        }
+        else {
+          (zeroes, product)
+        }
+    })._2)
 
     //Part 2
     for(y <- 0 until h) {
@@ -24,6 +32,4 @@ object Day8 {
   def decodePixel(layers: List[String], x: Int, y: Int, w: Int, h: Int): Char = {
     layers.view.map(layer => layer(y*w + x)).find(p => p != '2').getOrElse(' ')
   }
-
-
 }
