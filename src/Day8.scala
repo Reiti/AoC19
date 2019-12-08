@@ -23,13 +23,13 @@ object Day8 {
     //Part 2
     for(y <- 0 until h) {
       for(x <- 0 until w) {
-        print(decodePixel(layers, x, y, w, h))
+        print(decodePixel(layers, x, y, w))
       }
       println()
     }
   }
 
-  def decodePixel(layers: List[String], x: Int, y: Int, w: Int, h: Int): Char = {
+  def decodePixel(layers: List[String], x: Int, y: Int, w: Int): Char = {
     layers.view.map(layer => layer(y*w + x)).find(p => p != '2').getOrElse(' ')
   }
 }
