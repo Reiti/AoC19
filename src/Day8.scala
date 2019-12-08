@@ -6,19 +6,10 @@ object Day8 {
     val h = 6
     val layers = Util.loadDay(8).strip().grouped(w*h).toList
 
-    //Part 1
-    println(layers.foldLeft((w*h, 0))({
-      case ((zeroes, product), curr) =>
-        val nZeroes = curr.count(_ == '0')
-        val nProduct = curr.count(_ == '1') * curr.count(_ == '2')
+    val minLayer = layers.minBy(layer => layer.count(_ == '0'))
 
-        if(nZeroes < zeroes) {
-          (nZeroes, nProduct)
-        }
-        else {
-          (zeroes, product)
-        }
-    })._2)
+    //Part 1
+    println(minLayer.count(_ == '1') * minLayer.count(_ == '2'))
 
     //Part 2
     for(y <- 0 until h) {
