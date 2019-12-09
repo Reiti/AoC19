@@ -46,49 +46,29 @@ class IntcodeVM(program: Map[Int, BigInt]) {
     val second = ((opcode / 1000) % 10).toInt
     val third = ((opcode / 10000) % 10).toInt
 
-    val p1 = if (isOutput(operation, 1))  {
-      if(first == 0)
-        getI(program, opInd + 1)
-      else
-        getI(program, opInd + 1) + relOff
-    }
-    else {
-      first match {
-        case 0 => getP(program, opInd + 1)
-        case 1 => getI(program, opInd + 1)
-        case 2 => getR(program, opInd + 1, relOff)
-      }
-    }
-    val p2 = if (isOutput(operation, 2)) {
-      if(second == 0)
-        getI(program, opInd + 2)
-      else
-        getI(program, opInd + 2) + relOff
-    }
-     else {
-      second match {
-        case 0 => getP(program, opInd + 2)
-        case 1 => getI(program, opInd + 2)
-        case 2 => getR(program, opInd + 2, relOff)
-      }
-    }
-    val p3 = if(third == 1 || isOutput(operation, 3)) {
-      if(third == 0)
-        getI(program, opInd +3)
-      else
-        getI(program, opInd +3) + relOff
-    } else {
-      third match {
-        case 0 => getP(program, opInd +3)
-        case 1 => getI(program, opInd + 3)
-        case 2 => getR(program, opInd + 3, relOff)
-      }
-    }
+    val p1 = get(program, opInd, relOff, operation, first, 1)
+    val p2 = get(program, opInd, relOff, operation, second, 2)
+    val p3 = get(program, opInd, relOff, operation, third, 3)
 
     (operation, p1, p2, p3)
   }
 
 
+  private def get(program: Map[Int, BigInt], opInd: Int, relOff: Int, operation: Int, mode: Int, pos: Int) = {
+    if (isOutput(operation, pos)) {
+      if (mode == 0)
+        getI(program, opInd + pos)
+      else
+        getI(program, opInd + pos) + relOff
+    }
+    else {
+      mode match {
+        case 0 => getP(program, opInd + pos)
+        case 1 => getI(program, opInd + pos)
+        case 2 => getR(program, opInd + pos, relOff)
+      }
+    }
+  }
 
   private def getI(program: Map[Int, BigInt], pos: Int): BigInt = program.getOrElse(pos, BigInt(0))
 
