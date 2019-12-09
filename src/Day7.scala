@@ -1,4 +1,4 @@
-import util.{IntcodeVM, IntcodeVMPipes, Pipe, Util}
+import util.{IntcodeVM_old1, IntcodeVM_old2, Pipe, Util}
 
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutorService, Future}
 import java.util.concurrent.Executors
@@ -9,11 +9,11 @@ object Day7 {
   def main(args: Array[String]): Unit = {
     val program = Util.loadDay(7).split(",") map {_.toInt}
 
-    val va = new IntcodeVM(program)
-    val vb = new IntcodeVM(program)
-    val vc = new IntcodeVM(program)
-    val vd = new IntcodeVM(program)
-    val ve = new IntcodeVM(program)
+    val va = new IntcodeVM_old1(program)
+    val vb = new IntcodeVM_old1(program)
+    val vc = new IntcodeVM_old1(program)
+    val vd = new IntcodeVM_old1(program)
+    val ve = new IntcodeVM_old1(program)
 
     //Part1
     println(((0 to 4).permutations map {conf =>
@@ -41,11 +41,11 @@ object Day7 {
     val mem_d = new Pipe
     val mem_e = new Pipe
 
-    val a_s = new IntcodeVMPipes(program)
-    val b_s = new IntcodeVMPipes(program)
-    val c_s = new IntcodeVMPipes(program)
-    val d_s = new IntcodeVMPipes(program)
-    val e_s = new IntcodeVMPipes(program)
+    val a_s = new IntcodeVM_old2(program)
+    val b_s = new IntcodeVM_old2(program)
+    val c_s = new IntcodeVM_old2(program)
+    val d_s = new IntcodeVM_old2(program)
+    val e_s = new IntcodeVM_old2(program)
 
     implicit val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(Executors.newWorkStealingPool(8))
 
