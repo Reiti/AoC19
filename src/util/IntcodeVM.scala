@@ -2,49 +2,51 @@ package util
 
 import scala.annotation.tailrec
 
-class IntcodeVM(program: Map[Int, BigInt]) {
+class IntcodeVM(program: Map[Long, Long]) {
 
   def run(input: Pipe, output: Pipe): Pipe = runH(program, 0, input, output, 0)
 
   @tailrec
-  private def runH(program: Map[Int, BigInt], opInd: Int, input: Pipe, output: Pipe, relOff: Int): Pipe = {
+  private def runH(program: Map[Long, Long], opInd: Long, input: Pipe, output: Pipe, relOff: Long): Pipe = {
     val (operation, p1, p2, p3) = load(program, opInd, relOff)
     operation match {
       case 1 =>
         val res = p1 + p2
-        runH(program.updated(p3.toInt, res), opInd + 4, input, output, relOff)
+        runH(program.updated(p3, res), opInd + 4, input, output, relOff)
       case 2 =>
         val res = p1 * p2
-        runH(program.updated(p3.toInt, res), opInd + 4, input, output, relOff)
+        runH(program.updated(p3, res), opInd + 4, input, output, relOff)
       case 3 =>
-        runH(program.updated(p1.toInt, input.read()), opInd + 2, input, output, relOff)
+        runH(program.updated(p1, input.read()), opInd + 2, input, output, relOff)
       case 4 =>
         output.write(p1)
         //println(p1)
         runH(program, opInd + 2, input, output, relOff)
       case 5 =>
-        val target = if (p1 != 0) p2.toInt else opInd + 3
+        val target = if (p1 != 0) p2 else opInd + 3
         runH(program, target, input, output, relOff)
       case 6 =>
-        val target = if (p1 == 0) p2.toInt else opInd + 3
+        val target = if (p1 == 0) p2 else opInd + 3
         runH(program, target, input, output, relOff)
       case 7 =>
-        runH(program.updated(p3.toInt, boolToInt(p1 < p2)), opInd + 4, input, output, relOff)
+        runH(program.updated(p3, boolToInt(p1 < p2)), opInd + 4, input, output, relOff)
       case 8 =>
-        runH(program.updated(p3.toInt, boolToInt(p1 == p2)), opInd + 4, input, output, relOff)
+        runH(program.updated(p3, boolToInt(p1 == p2)), opInd + 4, input, output, relOff)
       case 9 =>
-        runH(program, opInd + 2, input, output, relOff + p1.toInt)
+        runH(program, opInd + 2, input, output, relOff + p1)
       case 99 =>
         output
+      case _ =>
+        throw new RuntimeException
     }
   }
 
-  private def load(program: Map[Int, BigInt], opInd: Int, relOff: Int) = {
+  private def load(program: Map[Long, Long], opInd: Long, relOff: Long): (Long, Long, Long, Long) = {
     val opcode = program(opInd)
-    val operation = (opcode % 100).toInt
-    val first = ((opcode / 100) % 10).toInt
-    val second = ((opcode / 1000) % 10).toInt
-    val third = ((opcode / 10000) % 10).toInt
+    val operation = opcode % 100
+    val first = (opcode / 100) % 10
+    val second = (opcode / 1000) % 10
+    val third = (opcode / 10000) % 10
 
     val p1 = get(program, opInd, relOff, operation, first, 1)
     val p2 = get(program, opInd, relOff, operation, second, 2)
@@ -53,13 +55,14 @@ class IntcodeVM(program: Map[Int, BigInt]) {
     (operation, p1, p2, p3)
   }
 
-
-  private def get(program: Map[Int, BigInt], opInd: Int, relOff: Int, operation: Int, mode: Int, pos: Int) = {
+  private def get(program: Map[Long, Long], opInd: Long, relOff: Long, operation: Long, mode: Long, pos: Long): Long = {
     if (isOutput(operation, pos)) {
       if (mode == 0)
         getI(program, opInd + pos)
-      else
+      else if(mode == 2)
         getI(program, opInd + pos) + relOff
+      else
+        throw new RuntimeException
     }
     else {
       mode match {
@@ -70,14 +73,14 @@ class IntcodeVM(program: Map[Int, BigInt]) {
     }
   }
 
-  private def getI(program: Map[Int, BigInt], pos: Int): BigInt = program.getOrElse(pos, BigInt(0))
+  private def getI(program: Map[Long, Long], pos: Long): Long = program.getOrElse(pos, 0)
 
-  private def getP(program: Map[Int, BigInt], pos: Int): BigInt = getI(program, getI(program, pos).toInt)
+  private def getP(program: Map[Long, Long], pos: Long): Long = getI(program, getI(program, pos))
 
-  private def getR(program: Map[Int, BigInt], pos: Int, relOff: Int): BigInt = getI(program, (getI(program, pos) + relOff).toInt)
+  private def getR(program: Map[Long, Long], pos: Long, relOff: Long): Long = getI(program, getI(program, pos) + relOff)
 
-  private def isOutput(opcode: BigInt, position: Int): Boolean = {
-    opcode.toInt match {
+  private def isOutput(opcode: Long, position: Long): Boolean = {
+    opcode match {
       case 1 | 2 | 7 | 8 => position == 3
       case 3 => position == 1
       case _ => false
