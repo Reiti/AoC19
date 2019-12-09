@@ -16,4 +16,12 @@ object Util {
 
   def loadDayInts(day: Int): List[Int] = loadDayLines(day).map(_.toInt)
 
+  def loadDayProgram(day: Int): Map[Int, BigInt] =
+    Util.loadDay(day)
+    .split(",")
+    .map { x => BigInt(x) }
+    .zipWithIndex
+    .map { x => (x._2, x._1) }.toMap
+
 }
+
