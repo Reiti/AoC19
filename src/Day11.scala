@@ -9,8 +9,7 @@ object Day11 extends App {
 
   //Part 1
   println(robot(software, 0).keys.size)
-
-
+  
   val picture = robot(software, 1)
   val maxX = picture.keys.map(_._1).max
   val minX = picture.keys.map(_._1).min
