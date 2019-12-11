@@ -17,6 +17,7 @@ object Day11 extends App {
   val maxY = picture.keys.map(_._2).max
   val minY = picture.keys.map(_._2).min
 
+  //Part 2
   for(y <- maxY to minY by -1) {
     for(x <- minX to maxX) {
       if(picture.getOrElse((x, y), 0) == 1)
@@ -53,7 +54,7 @@ object Day11 extends App {
     }
 
   }
-  
+
   //LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3
   def turn(pos: (Int, Int), heading: Int, direction: Int): ((Int, Int), Int) = {
     heading match {
