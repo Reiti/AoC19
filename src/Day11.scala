@@ -9,7 +9,7 @@ object Day11 extends App {
 
   //Part 1
   println(robot(software, 0).keys.size)
-  
+
   val picture = robot(software, 1)
   val maxX = picture.keys.map(_._1).max
   val minX = picture.keys.map(_._1).min
@@ -29,7 +29,7 @@ object Day11 extends App {
 
   def robot(software: IntcodeVMSuspendable, startingTile: Int): Map[(Int, Int), Int] = {
     val initialState = software.run(List(), List())
-    robotH(software, initialState, (0, 0), 2, Map((0, 0) -> startingTile))
+    robotH(software, initialState, (0, 0), 1, Map((0, 0) -> startingTile))
   }
 
   @tailrec
@@ -45,7 +45,9 @@ object Day11 extends App {
       case WAITING =>
         val color = newState.output.last
         val direction = newState.output.head
-        val (newPos, newHeading) = turn(pos, heading, direction.toInt)
+
+        val newHeading = turn(heading, direction.toInt)
+        val newPos = move(pos, newHeading)
 
         robotH(software, newState, newPos, newHeading, painted.updated(pos, color.toInt))
       case TERMINATED =>
@@ -54,37 +56,17 @@ object Day11 extends App {
 
   }
 
-  //LEFT: 0, RIGHT: 1, UP: 2, DOWN: 3
-  def turn(pos: (Int, Int), heading: Int, direction: Int): ((Int, Int), Int) = {
-    heading match {
-      case 0 =>
-        if(direction == 0) {
-          ((pos._1, pos._2 - 1), 3)
-        }
-        else {
-          ((pos._1, pos._2 + 1), 2)
-        }
-      case 1 =>
-        if(direction == 0) {
-          ((pos._1, pos._2 + 1), 2)
-        }
-        else {
-          ((pos._1, pos._2 - 1), 3)
-        }
-      case 2 =>
-        if(direction == 0) {
-          ((pos._1 - 1, pos._2), 0)
-        }
-        else {
-          ((pos._1 + 1, pos._2), 1)
-        }
-      case 3 =>
-        if(direction == 0) {
-          ((pos._1 + 1, pos._2), 1)
-        }
-        else {
-          ((pos._1 - 1, pos._2), 0)
-        }
-    }
+  //LEFT: 0, UP: 1, RIGHT: 2, DOWN 3
+  def move(pos: (Int, Int), heading: Int): (Int, Int) = heading match {
+    case 0 => (pos._1 - 1, pos._2)
+    case 1 => (pos._1, pos._2 + 1)
+    case 2 => (pos._1 + 1, pos._2)
+    case 3 => (pos._1, pos._2 - 1)
+  }
+
+  def turn(heading: Int, direction: Int): Int = {
+    val dir = Array(-1, 1)(direction)
+
+    (((heading + dir) % 4 )+ 4)% 4
   }
 }
