@@ -19,7 +19,7 @@ object Day11 extends App {
   //Part 2
   for(y <- maxY to minY by -1) {
     for(x <- minX to maxX) {
-      if(picture.getOrElse((x, y), 0) == 1)
+      if(picture(x,y) == 1)
         print("#")
       else
         print(" ")
@@ -29,15 +29,12 @@ object Day11 extends App {
 
   def robot(software: IntcodeVMSuspendable, startingTile: Int): Map[(Int, Int), Int] = {
     val initialState = software.run(List(), List())
-    robotH(software, initialState, (0, 0), 1, Map((0, 0) -> startingTile))
+    robotH(software, initialState, (0, 0), 1, Map((0, 0) -> startingTile).withDefaultValue(0))
   }
 
   @tailrec
   def robotH(software: IntcodeVMSuspendable, state: VMState, pos: (Int, Int), heading: Int, painted: Map[(Int, Int), Int]): Map[(Int, Int), Int] = {
-    val camera = painted.get(pos) match {
-      case Some(x) => x
-      case None => 0
-    }
+    val camera = painted(pos)
 
     val newState = software.run(state, List(camera), List())
 
