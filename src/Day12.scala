@@ -10,20 +10,18 @@ object Day12 extends App {
   //Part 1
   println(zip3(xr, yr, zr).map(x => totalEnergy(x._1, x._2, x._3)).sum)
 
-  val xp = repeat(stepPlane(x), x, 0)
-  val yp = repeat(stepPlane(y), y, 0)
-  val zp = repeat(stepPlane(z), z, 0)
-
   //Part 2
-  println(lcm(xp, yp, zp))
+  println(lcm(repeat(x), repeat(y), repeat(z)))
 
+  def repeat(start: List[(Int, Int)]): Long = repeatH(start, start, 0)
 
   @tailrec
-  def repeat(all: List[(Int, Int)], start: List[(Int, Int)], gen: Long): Long = {
-    if(all == start)
+  def repeatH(all: List[(Int, Int)], start: List[(Int, Int)], gen: Long): Long = {
+    val next = stepPlane(all)
+    if(next == start)
       gen + 1
     else
-      repeat(stepPlane(all), start, gen+1)
+      repeatH(next, start, gen+1)
   }
 
   def parse(s: String) = {

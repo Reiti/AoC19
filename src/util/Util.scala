@@ -39,5 +39,11 @@ object Util {
       case ((a, b), c) => (a, b, c)
     }}
   }
+
+  def zip3[A](t: (List[A], List[A], List[A])): List[(A, A, A)] = {
+    (t._1 zip t._2 zip t._3) map {x => x match {
+      case ((a, b), c) => (a, b, c)
+    }}
+  }
 }
 
