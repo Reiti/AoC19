@@ -41,5 +41,13 @@ object Util {
   }
 
   def zip3[A](t: (List[A], List[A], List[A])): List[(A, A, A)] = zip3(t._1, t._2, t._3)
+
+  def time[A](block: => A): A = {
+    val t0  = System.currentTimeMillis()
+    val result = block
+    val t1 = System.currentTimeMillis()
+    println("Elapsed time: " + (t1 - t0) + "ms")
+    result
+  }
 }
 
