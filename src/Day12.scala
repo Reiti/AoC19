@@ -1,13 +1,9 @@
-import util.Util
+import util.Util._
 
 import scala.annotation.tailrec
 
-case class Velocity(x: Int, y: Int, z: Int)
-case class Position(x: Int, y: Int, z: Int)
-case class Moon(v: Velocity, p: Position)
-
 object Day12 extends App {
-  val (x, y, z) = Util.loadDay(12).split("\n").map(_.strip()).map(parse).toList.unzip3
+  val (x, y, z) = loadDay(12).split("\n").map(_.strip()).map(parse).toList.unzip3
 
   val (xr, yr, zr) = Iterator.iterate((x, y, z))(v => step(v._1, v._2, v._3)).drop(1000).next()
 
@@ -19,7 +15,7 @@ object Day12 extends App {
   val zp = repeat(stepPlane(z), z, 0)
 
   //Part 2
-  println(lcm(lcm(xp, yp), zp))
+  println(lcm(xp, yp, zp))
 
 
   @tailrec
@@ -33,7 +29,6 @@ object Day12 extends App {
   def parse(s: String) = {
     val split = s.split(", ")
     val pos = split.map(_.split("=")(1).stripSuffix(">").toInt)
-
 
     ((pos(0), 0), (pos(1), 0), (pos(2), 0))
   }
@@ -52,27 +47,10 @@ object Day12 extends App {
 
   def totalEnergy(x: (Int, Int), y: (Int, Int), z: (Int, Int)): Int = potentialEnergy(x,y,z) * kineticEnergy(x,y,z)
 
-
   def stepPlane(all: List[(Int, Int)]): List[(Int, Int)] = {
     all map { m =>
       val x = all.map(n => if(n._1 == m._1) 0 else if(n._1 > m._1) 1 else -1).sum
       (m._1 + m._2 + x, m._2 +x)
     }
-  }
-
-  @tailrec
-  def gcd(a: Long, b: Long): Long = {
-    if(b == 0)
-      a
-    else
-      gcd(b, a%b)
-  }
-
-  def lcm(a: Long, b: Long): Long = a * b / gcd(a, b)
-
-  def zip3(a: List[(Int, Int)], b: List[(Int, Int)], c: List[(Int, Int)]): List[((Int, Int), (Int, Int), (Int, Int))] = {
-    (a zip b zip c) map {x => x match {
-      case ((a, b), c) => (a, b, c)
-    }}
   }
 }
