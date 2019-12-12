@@ -11,6 +11,10 @@ object Day12 extends App {
   //Part 2
   println(lcm(repeat(x), repeat(y), repeat(z)))
 
+  /* Marginally slower but cooler
+  def repeat(start: List[(Int, Int)]): Long = Iterator.iterate(stepPlane(start))(stepPlane).indexOf(start) + 1
+  */
+
   def repeat(start: List[(Int, Int)]): Long = repeatH(start, start, 0)
 
   @tailrec
