@@ -29,7 +29,7 @@ object Day12 extends App {
     ((pos(0), 0), (pos(1), 0), (pos(2), 0))
   }
 
-  def step(t:(List[(Int, Int)], List[(Int, Int)], List[(Int, Int)])): (List[(Int, Int)], List[(Int, Int)], List[(Int, Int)]) = {
+  def step(t: (List[(Int, Int)], List[(Int, Int)], List[(Int, Int)])): (List[(Int, Int)], List[(Int, Int)], List[(Int, Int)]) = {
     (stepPlane(t._1), stepPlane(t._2), stepPlane(t._3))
   }
 
