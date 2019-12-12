@@ -5,10 +5,8 @@ import scala.annotation.tailrec
 object Day12 extends App {
   val (x, y, z) = loadDay(12).split("\n").map(_.strip()).map(parse).toList.unzip3
 
-  val (xr, yr, zr) = Iterator.iterate((x, y, z))(v => step(v._1, v._2, v._3)).drop(1000).next()
-
   //Part 1
-  println(zip3(xr, yr, zr).map(x => totalEnergy(x._1, x._2, x._3)).sum)
+  println(zip3(Iterator.iterate((x, y, z))(step).drop(1000).next()).map(totalEnergy).sum)
 
   //Part 2
   println(lcm(repeat(x), repeat(y), repeat(z)))
@@ -31,8 +29,8 @@ object Day12 extends App {
     ((pos(0), 0), (pos(1), 0), (pos(2), 0))
   }
 
-  def step(x: List[(Int, Int)], y: List[(Int, Int)], z: List[(Int, Int)]) = {
-    (stepPlane(x), stepPlane(y), stepPlane(z))
+  def step(t:(List[(Int, Int)], List[(Int, Int)], List[(Int, Int)])) = {
+    (stepPlane(t._1), stepPlane(t._2), stepPlane(t._3))
   }
 
   def potentialEnergy(x: (Int, Int), y: (Int, Int), z: (Int, Int)): Int = {
@@ -43,7 +41,7 @@ object Day12 extends App {
     Math.abs(x._2) + Math.abs(y._2) + Math.abs(z._2)
   }
 
-  def totalEnergy(x: (Int, Int), y: (Int, Int), z: (Int, Int)): Int = potentialEnergy(x,y,z) * kineticEnergy(x,y,z)
+  def totalEnergy(t: ((Int, Int), (Int, Int), (Int, Int))): Int = potentialEnergy(t._1,t._2,t._3) * kineticEnergy(t._1,t._2,t._3)
 
   def stepPlane(all: List[(Int, Int)]): List[(Int, Int)] = {
     all map { m =>
