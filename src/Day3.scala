@@ -48,6 +48,4 @@ object Day3 {
       withDist.toList ++ points(xs, x + xOff, y + yOff, steps + distance)
     case Nil => List()
   }
-
-
 }

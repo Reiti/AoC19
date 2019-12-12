@@ -11,5 +11,4 @@ object Day5 {
     //Part 2
     vm.run(List(5)).foreach(println)
   }
-
 }
