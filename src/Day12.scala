@@ -22,14 +22,14 @@ object Day12 extends App {
       repeatH(next, start, gen+1)
   }
 
-  def parse(s: String) = {
+  def parse(s: String): ((Int, Int), (Int, Int), (Int, Int)) = {
     val split = s.split(", ")
     val pos = split.map(_.split("=")(1).stripSuffix(">").toInt)
 
     ((pos(0), 0), (pos(1), 0), (pos(2), 0))
   }
 
-  def step(t:(List[(Int, Int)], List[(Int, Int)], List[(Int, Int)])) = {
+  def step(t:(List[(Int, Int)], List[(Int, Int)], List[(Int, Int)])): (List[(Int, Int)], List[(Int, Int)], List[(Int, Int)]) = {
     (stepPlane(t._1), stepPlane(t._2), stepPlane(t._3))
   }
 
