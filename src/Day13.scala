@@ -36,7 +36,7 @@ object Day13 extends App {
         case None => scoreOld
       }
 
-      val direction = Math.signum(bx - px).toInt
+      val direction = bx.compareTo(px)
       playH(vm, vm.run(state, List(direction), List()), px.toInt, score.toInt)
     }
   }
