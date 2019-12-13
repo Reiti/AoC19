@@ -14,10 +14,7 @@ object Day13 extends App {
   //Part 2
   println(play(vmFree))
 
-  def play(vm: IntcodeVMSuspendable): Long = {
-    val newState = vm.run(List(), List())
-    playH(vm, newState, 0, 0)
-  }
+  def play(vm: IntcodeVMSuspendable): Long = playH(vm, vm.run(List(), List()), 0, 0)
 
   @tailrec
   def playH(vm: IntcodeVMSuspendable, state: VMState, pxOld: Int, scoreOld: Int): Int = {
