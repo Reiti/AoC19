@@ -1,6 +1,8 @@
 import sun.util.locale.provider.AvailableLanguageTags
 import util.Util
 
+import util.Util.{Graph, Node}
+
 import scala.annotation.tailrec
 
 case class Component(name: String, quantity: Long)
@@ -65,80 +67,49 @@ object Day14 extends App   {
 
 
 
-    println(produce(input1, Map("FUEL" -> 1L)))
-    println(produce(input2, Map("FUEL" -> 1L)))
-    println(produce(input3, Map("FUEL" -> 1L)))
-    println(produce(input4, Map("FUEL" -> 1L)))
-    println(produce(input5, Map("FUEL" -> 1L)))
+
+    println(calculateOreCost(input3, 1))
+
+    //println(produceTest(input1, List(("FUEL", 1)), Map(), Map()))
+    //println(produce(input1, Map("FUEL" -> 1L)))
+    //println(produce(input2, Map("FUEL" -> 1L)))
+    //println(produce(input3, Map("FUEL" -> 1L)))
+    //println(produce(input4, Map("FUEL" -> 1L)))
+    //println(produce(input5, Map("FUEL" -> 1L)))
 
 
-  @tailrec
-  def produce(reactions: List[Reaction], available: Map[String, Long]): Long = {
-    if(available.size == 1 && available.contains("ORE")) {
-      available("ORE")
-    } else {
-      val stepped = step(reactions, available)
-
-      val mat = stepped.keys.toList.filter(_ != "ORE").head
-
-      val  rec = reactions.find(r => r.component.name == mat).get
-
-      val updatedStepped = update(rec.parts, stepped.removed(mat), 1)
-      produce(reactions, updatedStepped)
-    }
-  }
-  def depth(reactions: List[Reaction], curr: Reaction, toFind: String): Int = {
-    if(curr.component.name == toFind) {
-      0
-    }
-    else {
-      val found = reactions.filter(r => curr.parts.exists(c => r.component.name == c.name))
-      if(found.isEmpty)
-        0
-      else
-        1 + found.map(r => depth(reactions, r, toFind)).reduce(Math.max)
-    }
+  def calculateOreCost(reactions: List[Reaction], amount: Long): Long = {
+    val ore = List((Node("ORE"), Set(Node("ORE"))))
+    val parsed = (ore ++ reactions.map(r => (Node(r.component.name), r.parts.map(x => Node(x.name)).toSet))).toMap
+    val graph = Graph(parsed)
+    println(graph.topologicalSort)
+    work(reactions, graph.topologicalSort.get.map(_.label).filter(_ != "ORE"), Map("FUEL" -> amount))
   }
 
   @tailrec
-  def step(reactions: List[Reaction], available: Map[String, Long]): Map[String, Long] = {
-    val next = available.find(x => producible(reactions, x))
-    next match {
-      case Some(v) =>
-        val n = v._1
-        val q = v._2
-        val r = reactions.find(r => r.component.name == n).get
-        val total = q / r.component.quantity
-        val remainder = q % r.component.quantity
-
-        val newAvailable = if(remainder == 0) {
-          available.removed(n)
-        } else {
-          available.updated(n, remainder)
-        }
-
-        val nextAvailable = update(r.parts, newAvailable, total)
-        step(reactions, nextAvailable)
-      case None =>
-        available
-    }
-  }
-
-  @tailrec
-  def update(parts: List[Component], available: Map[String, Long], quant: Long): Map[String, Long] = parts match {
-    case x :: xs =>
-      val q = available.getOrElse(x.name, 0L)
-      update(xs, available.updated(x.name, q + (x.quantity * quant)), quant)
+  def work(reactions: List[Reaction], sorted: List[String], cost: Map[String, Long]): Long = sorted match {
+    case x::xs =>
+      val r = reactions.find(r => r.component.name == x).get
+      val rq = r.component.quantity
+      val cq = cost(x)
+      val total = Math.ceil(cq.toDouble / rq.toDouble).toInt
+      println("#######################")
+      println(rq + " - " + cq + " - " + total)
+      println("--------------------")
+      cost foreach println
+      println("--------------------")
+      work(reactions, xs, addCost(r.parts, cost, total).removed(x))
     case Nil =>
-    available
+      cost("ORE")
   }
-  def producible(reactions: List[Reaction], curr: (String, Long)): Boolean = {
-    if(curr._1 == "ORE")
-      false
-    else {
-      val q = reactions.find(x => x.component.name == curr._1).get.component.quantity
-      (q <= curr._2)
-    }
+
+  @tailrec
+  def addCost(parts: List[Component], cost: Map[String, Long], quant: Long): Map[String, Long] = parts match {
+    case x::xs =>
+      val curr = cost.getOrElse(x.name, 0L)
+      addCost(xs, cost.updated(x.name, curr + x.quantity*quant), quant)
+    case Nil =>
+      cost
   }
 
   def parse(in: String): Reaction = {
