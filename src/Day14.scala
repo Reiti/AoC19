@@ -45,7 +45,6 @@ object Day14 extends App   {
                  |1 NVRVD => 8 CXFTF
                  |1 VJHF, 6 MNCFX => 4 RFSQX
                  |176 ORE => 6 VJHF""".stripMargin.split("\n").map(parse).toList
-
   val input5 ="""171 ORE => 8 CNZTR
                       |7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
                       |114 ORE => 4 BHXH
@@ -66,23 +65,11 @@ object Day14 extends App   {
 
 
 
-
-
-    println(calculateOreCost(input3, 1))
-
-    //println(produceTest(input1, List(("FUEL", 1)), Map(), Map()))
-    //println(produce(input1, Map("FUEL" -> 1L)))
-    //println(produce(input2, Map("FUEL" -> 1L)))
-    //println(produce(input3, Map("FUEL" -> 1L)))
-    //println(produce(input4, Map("FUEL" -> 1L)))
-    //println(produce(input5, Map("FUEL" -> 1L)))
-
-
+  println(calculateOreCost(input3, 2))
   def calculateOreCost(reactions: List[Reaction], amount: Long): Long = {
     val ore = List((Node("ORE"), Set(Node("ORE"))))
     val parsed = (ore ++ reactions.map(r => (Node(r.component.name), r.parts.map(x => Node(x.name)).toSet))).toMap
     val graph = Graph(parsed)
-    println(graph.topologicalSort)
     work(reactions, graph.topologicalSort.get.map(_.label).filter(_ != "ORE"), Map("FUEL" -> amount))
   }
 
@@ -93,11 +80,6 @@ object Day14 extends App   {
       val rq = r.component.quantity
       val cq = cost(x)
       val total = Math.ceil(cq.toDouble / rq.toDouble).toInt
-      println("#######################")
-      println(rq + " - " + cq + " - " + total)
-      println("--------------------")
-      cost foreach println
-      println("--------------------")
       work(reactions, xs, addCost(r.parts, cost, total).removed(x))
     case Nil =>
       cost("ORE")
