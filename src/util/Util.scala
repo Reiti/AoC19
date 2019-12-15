@@ -61,7 +61,8 @@ object Util {
           isCylic = currState.isCylic || adj(src).exists(currState.activeNodes))
 
         val finalState = adj(src).filterNot(newState.discovered).foldLeft(newState)(dfsVisit)
-        finalState.copy(tsOrder = src :: finalState.tsOrder, activeNodes = finalState.activeNodes - src)
+        val ord = if(finalState.tsOrder.contains(src)) finalState.tsOrder else src :: finalState.tsOrder
+        finalState.copy(tsOrder = ord, activeNodes = finalState.activeNodes - src)
       }
 
       val stateAfterSearch = adj.keys.foldLeft(DfsState()) {(state, n) => if (state.discovered(n)) state else dfsVisit(state, n)}

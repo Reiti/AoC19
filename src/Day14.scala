@@ -34,8 +34,7 @@ object Day14 extends App   {
     val ore = List((Node("ORE"), Set[Node]()))
     val parsed = (ore ++ reactions.map(r => (Node(r.component.name), r.parts.map(x => Node(x.name)).toSet))).toMap
     val graph = Graph(parsed)
-    //Double reversal with distinct only leaves the last occurence of a node in the list
-    work(reactions, graph.topologicalSort.get.reverse.distinct.reverse.map(_.label).filter(_ != "ORE"), Map("FUEL" -> amount))
+    work(reactions, graph.topologicalSort.get.map(_.label).filter(_ != "ORE"), Map("FUEL" -> amount))
   }
 
   @tailrec
