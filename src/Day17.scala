@@ -6,14 +6,7 @@ object Day17 extends App {
   val vm = new IntcodeVMSuspendable(program)
 
   val map = vm.run(List(), List()).output.reverse.map(_.toChar).mkString.split("\n")
-  /*val map = """..#..........
-              |..#..........
-              |#######...###
-              |#.#...#...#.#
-              |#############
-              |..#...#...#..
-              |..#####...^..""".stripMargin.strip.split("\n").map(_.strip)
-*/
+
   val intersections = for {
     y <- map.indices
     x <- map(y).indices
@@ -28,12 +21,10 @@ object Day17 extends App {
   //Part 1
   println(intersections.map(x => x._1*x._2).sum)
 
-
   val move = List('A',',','B',',','A',',','B',',','C',',','B',',','A',',','C',',','B',',','C', '\n').map(_.toLong)
   val a = List('L',',','1','2',',','L',',','8',',','R',',','1','0',',','R',',','1','0', '\n').map(_.toLong)
   val b = List('L',',','6',',','L',',','4',',','L',',','1','2', '\n').map(_.toLong)
   val c = List('R',',','1','0',',','L',',','8',',','L',',','4',',','R',',','1','0','\n').map(_.toLong)
-
 
   val newVm = new IntcodeVMSuspendable(program.updated(0, 2))
   val state1 = newVm.run(move, List())
@@ -44,7 +35,4 @@ object Day17 extends App {
 
   //Part 2
   println(result.output.head)
-
-
-
 }
