@@ -58,10 +58,7 @@ object Day18 extends App {
 
   //Part 1
   println(calc(inputPart1))
-
-  //Part 2
-
-
+  
   def calc(input: String): Int = {
     val map = input.strip.split("\n").map(_.strip)
 
