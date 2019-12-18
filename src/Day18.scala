@@ -60,32 +60,6 @@ object Day18 extends App {
   //println(calc(inputPart1))
 
   //Part 2
-  println(calc2(input5))
-
-  def calc2(input: String): Int = {
-    val map = input.strip.split("\n").map(_.strip)
-    val startsP = for {
-      x <- map(0).indices
-      y <- map.indices
-      if map(y)(x) == '@'
-    } yield (x, y)
-
-    val starts = List(("1",startsP(0)._1,startsP(0)._2), ("2",startsP(0)._1,startsP(0)._2),("3",startsP(0)._1,startsP(0)._2),("4",startsP(0)._1,startsP(0)._2))
-
-    val occurrences = ('a' to 'z').filter(input.contains(_))
-
-    val chars = occurrences ++ occurrences.map(_.toUpper).filter(input.contains(_))
-    val coords = chars.map(c => {
-      val index = map.mkString.indexOf(c)
-      val x = index % map(0).length
-      val y = index / map(0).length
-      (c, x, y)
-    }) ++ starts
-    val graph = coords.map({ case (c, x, y) => (c, bfs(map, (x, y))) }).toMap
-
-  }
-
-
 
 
   def calc(input: String): Int = {
@@ -110,24 +84,26 @@ object Day18 extends App {
     var toVisit = new scala.collection.mutable.HashSet[(Char, Int, Int)]()
     toVisit.addAll(start.map(c => (c, 0, 0)))
     var min = Integer.MAX_VALUE
+    var mask = 0
     while(toVisit.nonEmpty) {
       val newNodes = scala.collection.mutable.HashSet[(Char, Int, Int)]()
       for(node <- toVisit) {
-        if(node._3 == goal) {
+        if(mask == goal) {
           if(node._2 < min) {
             min = node._2
           }
+          println("yeet")
         }
-        val neighbors = graph(node._1).filter(c => !visited.contains((c._1, node._3)) && traversable(c._1, node._3)).map(c => (c._1, c._2 + node._2, node._3))
+        val neighbors = graph(node._1).filter(c => !visited.contains((c._1, mask)) && traversable(c._1, mask)).map(c => (c._1, c._2 + node._2, mask))
         val consider = if(node._1 != '@' && node._1.isLower) {
-          (node._1, node._2, node._3 | (1 << node._1.toChar - 'a')) :: neighbors
+          mask = mask | (1 << node._1.toChar - 'a')
+          (node._1, node._2, mask) :: neighbors
         } else {
           neighbors
         }
 
-        val valid = consider.filter(c => !visited.contains((c._1, c._3)))
-        newNodes.addAll(valid)
-        visited.add((node._1, node._3))
+        newNodes.addAll(consider)
+        visited.add((node._1, mask))
       }
 
       toVisit = newNodes
