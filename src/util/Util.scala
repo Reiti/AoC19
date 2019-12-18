@@ -11,6 +11,12 @@ object Util {
     }.get
   }
 
+  def loadFilename(name: String): String = {
+    Using(Source.fromResource(name)) {
+      source => source.mkString.strip()
+    }.get
+  }
+
   def loadDayLines(day: Int): List[String] = loadDay(day).split("\n").toList
 
   def loadDayInts(day: Int): List[Int] = loadDayLines(day).map(_.toInt)
