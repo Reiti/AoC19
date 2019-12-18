@@ -57,7 +57,7 @@ object Day18 extends App {
    */
 
   //Part 1
-  //println(calc(inputPart1))
+  println(calc(inputPart1))
 
   //Part 2
 
@@ -77,38 +77,6 @@ object Day18 extends App {
     val graph = coords.map({ case (c, x, y) => (c, bfs(map, (x, y))) }).toMap
 
     bfs3d(graph, '@', Integer.parseInt("1" * occurrences.size, 2))
-  }
-
-  def bfs3d4Bots(graph: Map[Char, List[(Char, Int)]], start: List[Char], goal: Int): Int = {
-    val visited = scala.collection.mutable.HashSet[(Char, Int)]()
-    var toVisit = new scala.collection.mutable.HashSet[(Char, Int, Int)]()
-    toVisit.addAll(start.map(c => (c, 0, 0)))
-    var min = Integer.MAX_VALUE
-    var mask = 0
-    while(toVisit.nonEmpty) {
-      val newNodes = scala.collection.mutable.HashSet[(Char, Int, Int)]()
-      for(node <- toVisit) {
-        if(mask == goal) {
-          if(node._2 < min) {
-            min = node._2
-          }
-          println("yeet")
-        }
-        val neighbors = graph(node._1).filter(c => !visited.contains((c._1, mask)) && traversable(c._1, mask)).map(c => (c._1, c._2 + node._2, mask))
-        val consider = if(node._1 != '@' && node._1.isLower) {
-          mask = mask | (1 << node._1.toChar - 'a')
-          (node._1, node._2, mask) :: neighbors
-        } else {
-          neighbors
-        }
-
-        newNodes.addAll(consider)
-        visited.add((node._1, mask))
-      }
-
-      toVisit = newNodes
-    }
-    min
   }
 
   def bfs3d(graph: Map[Char, List[(Char, Int)]], start: Char, goal: Int): Int = {
