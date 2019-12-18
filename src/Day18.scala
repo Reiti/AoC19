@@ -4,8 +4,8 @@ import scala.collection.immutable.HashSet
 
 object Day18 extends App {
 
-  val inputReal = Util.loadDay(18)
-
+  val inputPart1 = Util.loadDay(18)
+  val inputPart2 = Util.loadFilename("18_2.txt")
 
   val input1 = """########################
                 |#f.D.E.e.C.b.A.@.a.B.c.#
@@ -41,6 +41,14 @@ object Day18 extends App {
                 |###g#h#i################
                 |########################""".stripMargin
 
+  val input5 = """#######
+                 |#a.#Cd#
+                 |##@#@##
+                 |#######
+                 |##@#@##
+                 |#cB#Ab#
+                 |#######""".stripMargin
+
   /*
   println(calc(input1))
   println(calc(input2))
@@ -48,7 +56,35 @@ object Day18 extends App {
   println(calc(input4))
    */
 
-  println(calc(inputReal))
+  //Part 1
+  //println(calc(inputPart1))
+
+  //Part 2
+  println(calc2(input5))
+
+  def calc2(input: String): Int = {
+    val map = input.strip.split("\n").map(_.strip)
+    val startsP = for {
+      x <- map(0).indices
+      y <- map.indices
+      if map(y)(x) == '@'
+    } yield (x, y)
+
+    val starts = List(("1",startsP(0)._1,startsP(0)._2), ("2",startsP(0)._1,startsP(0)._2),("3",startsP(0)._1,startsP(0)._2),("4",startsP(0)._1,startsP(0)._2))
+
+    val occurrences = ('a' to 'z').filter(input.contains(_))
+
+    val chars = occurrences ++ occurrences.map(_.toUpper).filter(input.contains(_))
+    val coords = chars.map(c => {
+      val index = map.mkString.indexOf(c)
+      val x = index % map(0).length
+      val y = index / map(0).length
+      (c, x, y)
+    }) ++ starts
+    val graph = coords.map({ case (c, x, y) => (c, bfs(map, (x, y))) }).toMap
+
+  }
+
 
 
 
@@ -64,12 +100,39 @@ object Day18 extends App {
       val y = index / map(0).length
       (c, x, y)
     })
-
-    val start = coords.find(_._1 == '@').get
     val graph = coords.map({ case (c, x, y) => (c, bfs(map, (x, y))) }).toMap
 
-    //println(Integer.parseInt("1" * occurrences.size, 2))
     bfs3d(graph, '@', Integer.parseInt("1" * occurrences.size, 2))
+  }
+
+  def bfs3d4Bots(graph: Map[Char, List[(Char, Int)]], start: List[Char], goal: Int): Int = {
+    val visited = scala.collection.mutable.HashSet[(Char, Int)]()
+    var toVisit = new scala.collection.mutable.HashSet[(Char, Int, Int)]()
+    toVisit.addAll(start.map(c => (c, 0, 0)))
+    var min = Integer.MAX_VALUE
+    while(toVisit.nonEmpty) {
+      val newNodes = scala.collection.mutable.HashSet[(Char, Int, Int)]()
+      for(node <- toVisit) {
+        if(node._3 == goal) {
+          if(node._2 < min) {
+            min = node._2
+          }
+        }
+        val neighbors = graph(node._1).filter(c => !visited.contains((c._1, node._3)) && traversable(c._1, node._3)).map(c => (c._1, c._2 + node._2, node._3))
+        val consider = if(node._1 != '@' && node._1.isLower) {
+          (node._1, node._2, node._3 | (1 << node._1.toChar - 'a')) :: neighbors
+        } else {
+          neighbors
+        }
+
+        val valid = consider.filter(c => !visited.contains((c._1, c._3)))
+        newNodes.addAll(valid)
+        visited.add((node._1, node._3))
+      }
+
+      toVisit = newNodes
+    }
+    min
   }
 
   def bfs3d(graph: Map[Char, List[(Char, Int)]], start: Char, goal: Int): Int = {
