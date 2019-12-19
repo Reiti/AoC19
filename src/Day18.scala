@@ -83,14 +83,15 @@ object Day18 extends App {
    */
 
   //Part 1
-  //println(calc(inputPart1))
+  println(calc(inputPart1))
 
   //Part 2
-  println(calc2(input5))
-  println(calc2(input6))
-  println(calc2(input7))
-  println(calc2(input8))
-  //println(calc2(inputPart2))
+  //println(calc2(input5))
+  //println(calc2(input6))
+  //println(calc2(input7))
+  //println(calc2(input8))
+  println(calc2(inputPart2))
+
 
   def calc2(input: String): Int = {
     val map = input.strip.split("\n").map(_.strip)
@@ -108,18 +109,17 @@ object Day18 extends App {
     bfs3dMultiple(graph, BFSState('1', '2', '3', '4', 0, 0), Integer.parseInt("1" * occurrences.size, 2))
   }
 
-
   case class BFSState(r1: Char, r2: Char, r3: Char, r4: Char, mask: Int, dist: Int)
 
   def bfs3dMultiple(graph: Map[Char, List[(Char, Int)]], start: BFSState, goal: Int): Int = {
-    var visited = scala.collection.mutable.HashSet[BFSState]()
-    //var toVisit = scala.collection.mutable.HashSet[BFSState](start)
-    var toVisit = scala.collection.mutable.PriorityQueue[BFSState]()(Ordering.by({c => c.dist - c.mask}))
+    val visited = scala.collection.mutable.HashSet[BFSState]()
+    var toVisit = scala.collection.mutable.PriorityQueue[BFSState]()(Ordering.by({c => c.dist}))
     val list = scala.collection.mutable.ArrayBuffer[BFSState]()
     toVisit.addOne(start)
     while(toVisit.nonEmpty) {
-      var nextNodes = scala.collection.mutable.HashSet[BFSState]()
-      for(node <- toVisit) {
+      val nextNodes = scala.collection.mutable.HashSet[BFSState]()
+      while(toVisit.nonEmpty) {
+        val node = toVisit.dequeue()
         if(node.mask == goal) {
           if(list.size >= 1000) {
             return list.minBy(c => c.dist).dist
@@ -139,35 +139,33 @@ object Day18 extends App {
         val r4 = graph(node.r4).filter(c => traversable(c._1, node.mask)).map { c =>
           BFSState(node.r1, node.r2, node.r3, c._1, node.mask, node.dist + c._2)
         }
-        val n1 = if(node.r1.isLower) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r1 - 'a'), node.dist) :: r1 ++ r1.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r1 - 'a'), state.dist))
+        val n1 = if(node.r1.isLower && ((node.mask & (1 << node.r1 - 'a')) == 0)) {
+          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r1 - 'a'), node.dist) :: r1.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r1 - 'a'), state.dist))
         } else {
           r1
         }
-        val n2 = if(node.r2.isLower) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r2 - 'a'), node.dist) :: r2 ++ r2.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r2 - 'a'), state.dist))
+        val n2 = if(node.r2.isLower && ((node.mask & (1 << node.r2 - 'a')) == 0)) {
+          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r2 - 'a'), node.dist) :: r2.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r2 - 'a'), state.dist))
         } else {
           r2
         }
-        val n3 = if(node.r3.isLower) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r3 - 'a'), node.dist) :: r3 ++ r3.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r3 - 'a'), state.dist))
+        val n3 = if(node.r3.isLower && ((node.mask & (1 << node.r3 - 'a')) == 0)) {
+          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r3 - 'a'), node.dist) :: r3.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r3 - 'a'), state.dist))
         } else {
           r3
         }
-        val n4 = if(node.r4.isLower) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r4 - 'a'), node.dist) :: r4 ++ r4.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r4 - 'a'), state.dist))
+        val n4 = if(node.r4.isLower && ((node.mask & (1 << node.r4 - 'a')) == 0)) {
+          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r4 - 'a'), node.dist) :: r4.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r4 - 'a'), state.dist))
         } else {
           r4
         }
-
-        //println(node.r1 + " - " + (n1 mkString "-"))
         nextNodes.addAll(n1 ++ n2 ++ n3 ++ n4)
         visited.add(node)
       }
-      toVisit = scala.collection.mutable.PriorityQueue[BFSState]()(Ordering.by({c => c.dist - c.mask}))
       toVisit.addAll(nextNodes.diff(visited).groupBy(state => (state.r1, state.r2, state.r3, state.r4, state.mask)).map(_._2.minBy(_.dist)))
+      val max = toVisit.maxBy(_.mask.toBinaryString.count(_ == '1')).mask.toBinaryString.count(_ == '1')
+      toVisit = toVisit.filter(_.mask.toBinaryString.count(_ == '1') == max)
     }
-
     0
   }
 
@@ -212,7 +210,6 @@ object Day18 extends App {
         newNodes.addAll(valid)
         visited.add((node._1, node._3))
       }
-
       toVisit = newNodes
     }
     min
