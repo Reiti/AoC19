@@ -83,7 +83,7 @@ object Day18 extends App {
    */
 
   //Part 1
-  //println(calc(inputPart1))
+  println(calc(inputPart1))
 
   //Part 2
   //println(calc2(input5))
