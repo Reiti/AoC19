@@ -29,7 +29,6 @@ class IntcodeVMSuspendable(program: Map[Long, Long]) {
           runH(program.updated(p1, input.head), opInd + 2, input.tail, output, relOff)
         }
       case 4 =>
-        //println(p1)
         runH(program, opInd + 2, input, List(p1) ++ output, relOff)
       case 5 =>
         val target = if (p1 != 0) p2 else opInd + 3
