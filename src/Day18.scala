@@ -83,7 +83,7 @@ object Day18 extends App {
    */
 
   //Part 1
-  println(calc(inputPart1))
+  //println(calc(inputPart1))
 
   //Part 2
   //println(calc2(input5))
@@ -113,53 +113,16 @@ object Day18 extends App {
 
   def bfs3dMultiple(graph: Map[Char, List[(Char, Int)]], start: BFSState, goal: Int): Int = {
     val visited = scala.collection.mutable.HashSet[BFSState]()
-    var toVisit = scala.collection.mutable.PriorityQueue[BFSState]()(Ordering.by({c => c.dist}))
-    val list = scala.collection.mutable.ArrayBuffer[BFSState]()
+    var toVisit = scala.collection.mutable.PriorityQueue[BFSState]()(Ordering.by({c => c.dist*(-1)}))
     toVisit.addOne(start)
     while(toVisit.nonEmpty) {
       val nextNodes = scala.collection.mutable.HashSet[BFSState]()
       while(toVisit.nonEmpty) {
         val node = toVisit.dequeue()
         if(node.mask == goal) {
-          if(list.size >= 1000) {
-            return list.minBy(c => c.dist).dist
-          } else {
-            list.append(node)
-          }
+          return node.dist
         }
-        val r1 = graph(node.r1).filter(c => traversable(c._1, node.mask)).map { c =>
-          BFSState(c._1, node.r2, node.r3, node.r4, node.mask, node.dist + c._2)
-        }
-        val r2 = graph(node.r2).filter(c => traversable(c._1, node.mask)).map { c =>
-          BFSState(node.r1, c._1, node.r3, node.r4, node.mask, node.dist + c._2)
-        }
-        val r3 = graph(node.r3).filter(c => traversable(c._1, node.mask)).map { c =>
-          BFSState(node.r1, node.r2, c._1, node.r4, node.mask, node.dist + c._2)
-        }
-        val r4 = graph(node.r4).filter(c => traversable(c._1, node.mask)).map { c =>
-          BFSState(node.r1, node.r2, node.r3, c._1, node.mask, node.dist + c._2)
-        }
-        val n1 = if(node.r1.isLower && ((node.mask & (1 << node.r1 - 'a')) == 0)) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r1 - 'a'), node.dist) :: r1.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r1 - 'a'), state.dist))
-        } else {
-          r1
-        }
-        val n2 = if(node.r2.isLower && ((node.mask & (1 << node.r2 - 'a')) == 0)) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r2 - 'a'), node.dist) :: r2.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r2 - 'a'), state.dist))
-        } else {
-          r2
-        }
-        val n3 = if(node.r3.isLower && ((node.mask & (1 << node.r3 - 'a')) == 0)) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r3 - 'a'), node.dist) :: r3.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r3 - 'a'), state.dist))
-        } else {
-          r3
-        }
-        val n4 = if(node.r4.isLower && ((node.mask & (1 << node.r4 - 'a')) == 0)) {
-          BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r4 - 'a'), node.dist) :: r4.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r4 - 'a'), state.dist))
-        } else {
-          r4
-        }
-        nextNodes.addAll(n1 ++ n2 ++ n3 ++ n4)
+        nextNodes.addAll(neighbors(graph, node))
         visited.add(node)
       }
       toVisit.addAll(nextNodes.diff(visited).groupBy(state => (state.r1, state.r2, state.r3, state.r4, state.mask)).map(_._2.minBy(_.dist)))
@@ -167,6 +130,43 @@ object Day18 extends App {
       toVisit = toVisit.filter(_.mask.toBinaryString.count(_ == '1') == max)
     }
     0
+  }
+
+  def neighbors(graph: Map[Char, List[(Char, Int)]], node: BFSState): List[BFSState] = {
+    val r1 = graph(node.r1).filter(c => traversable(c._1, node.mask)).map { c =>
+      BFSState(c._1, node.r2, node.r3, node.r4, node.mask, node.dist + c._2)
+    }
+    val r2 = graph(node.r2).filter(c => traversable(c._1, node.mask)).map { c =>
+      BFSState(node.r1, c._1, node.r3, node.r4, node.mask, node.dist + c._2)
+    }
+    val r3 = graph(node.r3).filter(c => traversable(c._1, node.mask)).map { c =>
+      BFSState(node.r1, node.r2, c._1, node.r4, node.mask, node.dist + c._2)
+    }
+    val r4 = graph(node.r4).filter(c => traversable(c._1, node.mask)).map { c =>
+      BFSState(node.r1, node.r2, node.r3, c._1, node.mask, node.dist + c._2)
+    }
+    val n1 = if(node.r1.isLower && ((node.mask & (1 << node.r1 - 'a')) == 0)) {
+      BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r1 - 'a'), node.dist) :: r1.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r1 - 'a'), state.dist))
+    } else {
+      r1
+    }
+    val n2 = if(node.r2.isLower && ((node.mask & (1 << node.r2 - 'a')) == 0)) {
+      BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r2 - 'a'), node.dist) :: r2.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r2 - 'a'), state.dist))
+    } else {
+      r2
+    }
+    val n3 = if(node.r3.isLower && ((node.mask & (1 << node.r3 - 'a')) == 0)) {
+      BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r3 - 'a'), node.dist) :: r3.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r3 - 'a'), state.dist))
+    } else {
+      r3
+    }
+    val n4 = if(node.r4.isLower && ((node.mask & (1 << node.r4 - 'a')) == 0)) {
+      BFSState(node.r1, node.r2, node.r3, node.r4, node.mask | (1 << node.r4 - 'a'), node.dist) :: r4.map(state => BFSState(state.r1, state.r2, state.r3, state.r4, state.mask | (1 << node.r4 - 'a'), state.dist))
+    } else {
+      r4
+    }
+
+    n1 ++ n2 ++ n3 ++ n4
   }
 
   
