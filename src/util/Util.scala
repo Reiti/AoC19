@@ -86,5 +86,33 @@ object Util {
       case _ => None
     }
   }
+
+  type WeightedGraph[A] = Map[A, List[(A, Int)]]
+  def dijkstra[A, B](graph: WeightedGraph[A], start: B, target: B, neighbors: (WeightedGraph[A], B) => List[(B, Int)]): Int = {
+    val distance = scala.collection.mutable.HashMap[B, Int]().withDefault(_ => Int.MaxValue)
+    val visited = scala.collection.mutable.HashSet[B]()
+    val q = scala.collection.mutable.PriorityQueue[B]()(Ordering.by(c => -distance(c)))
+
+    distance(start) = 0
+    q.enqueue(start)
+
+    while(q.nonEmpty) {
+      val node = q.dequeue()
+      if(node == target) {
+        return distance(target)
+      }
+      for(neigh <- neighbors(graph, node)) {
+        if(!visited.contains(neigh._1)) {
+          val newDistance = distance(node) + neigh._2
+          if(newDistance < distance(neigh._1)) {
+            distance(neigh._1) = newDistance
+            q.enqueue(neigh._1)
+          }
+        }
+      }
+      visited.add(node)
+    }
+    distance(target)
+  }
 }
 
