@@ -86,8 +86,7 @@ object Day20 extends App {
   //println(dijkstra(graph, "aa", "zz"))
 
   println(dijkstraRec(graph, State("aa", 0), State("zz", 0)))
-
-
+  
   /*
 
   for(y <- input.indices) {
