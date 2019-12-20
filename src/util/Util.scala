@@ -11,6 +11,12 @@ object Util {
     }.get
   }
 
+  def loadDayKeepWhitespace(day: Int): String = {
+    Using(Source.fromResource(s"$day.txt")) {
+      source => source.mkString
+    }.get
+  }
+
   def loadFilename(name: String): String = {
     Using(Source.fromResource(name)) {
       source => source.mkString.strip()
