@@ -3,7 +3,7 @@ import util.Util
 import scala.annotation.tailrec
 
 object Day20 extends App {
-  //val input1 = Util.loadDayKeepWhitespace(20).split("\n")
+  val input1 = Util.loadDayKeepWhitespace(20).split("\n")
 
   /*
   val input1 = """         A
@@ -26,7 +26,7 @@ object Day20 extends App {
                  |             Z
                  |             Z       """.stripMargin.split("\n")
 
-   */
+
 
   val input1 = """             Z L X W       C
                  |             Z P Q B       K
@@ -66,6 +66,7 @@ object Day20 extends App {
                  |               A O F   N
                  |               A A D   M                     """.stripMargin.split("\n")
 
+*/
   val input = input1.map(_.padTo(input1(3).length+2, ' '))
 
 
@@ -85,7 +86,7 @@ object Day20 extends App {
 
   //println(dijkstra(graph, "aa", "zz"))
 
-  println(dijkstraRec(graph, State("aa", 0), State("zz", 0)))
+  Util.time{println(dijkstraRec(graph, State("aa", 0), State("zz", 0)))}
   
   /*
 
@@ -101,19 +102,21 @@ object Day20 extends App {
   case class State(label: String, layer: Int)
 
   def dijkstraRec(graph: Map[String, List[(String, Int)]], start: State, target: State): Int = {
-    val distance = scala.collection.mutable.HashMap[State, Int]().withDefault(_ => 100000)
+    val distance = scala.collection.mutable.HashMap[State, Int]().withDefault(_ => 1000000)
+    distance(start) = 0
     val visited = scala.collection.mutable.HashSet[State]()
     val q = scala.collection.mutable.ArrayBuffer[State]()
-    q.append(start)
-
+    q.addAll(start :: (0 to 200).flatMap(layer => graph.keys.map(k => State(k, layer))).toList)
+    var max = 0
     while(q.nonEmpty) {
-      val node = q.minBy(e => distance(e))
-      if(node == State("zz", 0)) {
-        return distance(node)
-      }
+      val node = q.minBy(distance)
       q.remove(q.indexOf(node))
+      if(node.layer > max) {
+        max = node.layer
+        println(max)
+      }
       for(neigh <- recNeighbors(graph, node)) {
-        if(!visited.contains(neigh._1)) {
+        if(q.contains(neigh._1) && neigh._1.layer < 200) {
           if(neigh._1 == State("zz", 0)) {
             val newDistance = distance(node) + neigh._2
             return Math.min(distance(neigh._1), newDistance)
@@ -122,7 +125,6 @@ object Day20 extends App {
           if(newDistance < distance(neigh._1)) {
             distance(neigh._1) = newDistance
           }
-          q.append(neigh._1)
         }
       }
       visited.add(node)
@@ -132,7 +134,7 @@ object Day20 extends App {
   }
 
   def recNeighbors(graph: Map[String, List[(String, Int)]], which: State): List[(State, Int)] = {
-    val n = graph(which.label).map(e => (State(e._1, which.layer), e._2))
+    val n = graph(which.label).map(e => (State(e._1, which.layer), e._2)).filter(s => !(s._1.layer != 0 && (s._1.label == "aa" || s._1.label == "zz")))
 
     val fin = if(which.label != "aa" && which.label != "zz") {
       if(which.label.forall(_.isLower)) {
