@@ -9,6 +9,7 @@ object Day22 extends App {
   val repetitions = 101741582076661L
   
   val (a1, b1) = combine(coefficients(10007, input, List()), 10007)
+
   //Part 1
   println(applyPoly(a1, b1)(2019) % 10007)
 
