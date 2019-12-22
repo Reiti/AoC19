@@ -7,16 +7,16 @@ object Day22 extends App {
 
   val size = 119315717514047L
   val repetitions = 101741582076661L
-
+  
+  val (a1, b1) = combine(coefficients(10007, input, List()), 10007)
   //Part 1
-  println(calcPos(10007, input, 2019))
+  println(applyPoly(a1, b1)(2019) % 10007)
 
-  val (c, d) = combine(coefficients(size, input, List()), size)
+  val (a2, b2) = combine(coefficients(size, input, List()), size)
+  val (aT, bT) = expBySquare(a2, b2, repetitions, size)
 
-  val (a, b) = expBySquare(c, d, repetitions, size)
-
-  val invA = a.modInverse(size)
-  val res = (((invA * 2020) % size) - (invA * b % size)) % size
+  val invA = aT.modInverse(size)
+  val res = (((invA * 2020) % size) - (invA * bT % size)) % size
 
   //Part 2
   println(res)
@@ -64,63 +64,8 @@ object Day22 extends App {
       acc
   }
 
-  @tailrec
-  def calcPos(size: Long, instructions: List[(Int, Int)], pos: Long): Long = instructions match {
-    case x::xs => x match {
-      case (0, c) =>
-        calcPos(size, xs, (pos * c) % size)
-      case (1, c) =>
-        if(c >= 0) {
-          if(c > pos) {
-            calcPos(size, xs, (size - c) + pos)
-          } else {
-            calcPos(size, xs, pos - c)
-          }
-        } else {
-          if((size + c) > pos) {
-            calcPos(size, xs, pos - c)
-          } else {
-            calcPos(size, xs, pos - (size + c))
-          }
-        }
-      case (2, _) =>
-        calcPos(size, xs, size - pos - 1)
-    }
-    case Nil =>
-      pos
-  }
-
-  @tailrec
-  def shuffle(stack: List[Int], instructions: List[(Int, Int)]): List[Int] = instructions match {
-    case x::xs =>
-      x match {
-        case (0, c) =>
-          shuffle(dealNew(stack, c), xs)
-        case (1, c) =>
-          if(c >= 0) {
-            val p1 = stack.slice(0, c)
-            val p2 = stack.slice(c, stack.size)
-            shuffle(p2 ++ p1, xs)
-          }  else {
-            val p1 = stack.slice(0, stack.size + c)
-            val p2 = stack.slice(stack.size + c, stack.size)
-            shuffle(p2 ++ p1, xs)
-          }
-        case (2, _) =>
-          shuffle(stack.reverse, xs)
-      }
-    case Nil =>
-      stack
-  }
-
-  def dealNew(stack: List[Int], inc: Int): List[Int] = {
-    val size = stack.size
-    @tailrec
-    def dealNewH(stack: List[Int], inc: Int, acc: List[Int], pos: Int): List[Int] = stack match {
-      case x::xs => dealNewH(xs, inc, acc.updated(pos, x), (pos + inc) % size)
-      case Nil => acc
-    }
-    dealNewH(stack, inc, List.fill(size){0}, 0)
+  def applyPoly(a: BigInt, b: BigInt)(x: BigInt): BigInt = {
+    a*x + b
   }
 
   def parse(s: String): (Int, Int) = {
@@ -134,5 +79,4 @@ object Day22 extends App {
       (2, 0)
     }
   }
-
 }
