@@ -14,7 +14,6 @@ object Day23 extends App {
   //Part 2
   println(runWithNat(machines, vm, Map(), (-1, -1), Set()))
 
-
   @tailrec
   def run(machines: List[VMState], vm: IntcodeVMSuspendable, packets: Map[Long, List[Long]]): Long = {
     val newPacks = scala.collection.mutable.HashMap[Long, List[Long]]()
@@ -35,6 +34,7 @@ object Day23 extends App {
       }
       s
     }
+    
     if (!found) {
       run(newStates, vm, newPacks.toMap)
     } else {
