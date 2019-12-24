@@ -96,7 +96,7 @@ object Day24 extends App {
       val inner = map(level+1)(4).map(count).sum
       inner + r + d + l
     } else {
-      countNeighbors(map(level), x, y)
+      u + r + d + l
     }
   }
 
